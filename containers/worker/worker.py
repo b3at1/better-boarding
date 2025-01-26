@@ -3,8 +3,10 @@ from dotenv import load_dotenv
 import gen  # Assuming gen.py is in the same directory
 import requests  # Import requests to send data to another server
 import os # For dotenv
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app, methods=["POST, OPTIONS"], origins=["https://betterboarding.tech", "http://localhost:3000"])
 load_dotenv()
 
 # Define the allowed URL that can send requests
