@@ -45,7 +45,7 @@ const Palette: React.FC<PaletteProps> = ({ onColorSelect }) => {
                 setSelectedIndex((prevIndex) => prevIndex + 1);
             } else {
                 let newColor = getRandomColor();
-                while (colors.includes(newColor)) {
+                while (colors.includes(newColor) || invalidColor(newColor, colors)) {
                     newColor = getRandomColor();
                 }
                 setColors((prevColors) => [...prevColors, newColor]);
