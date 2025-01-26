@@ -1,18 +1,43 @@
 'use client';
 import React, { useState } from 'react';
+import Palette, { PaletteProps } from '@/components/palette';
 
 export default function BookingPage() {
     const rows = 18;
     const seatsPerRow = 6;
-    const initialSeats = Array.from({ length: rows }, () => Array(seatsPerRow).fill(false));
+    const initialSeats = Array.from({ length: rows }, () => Array(seatsPerRow).fill(0));
+    const initialSeatColors = Array.from({ length: rows * seatsPerRow }, () => 'lightgray');
 
     const [seats, setSeats] = useState(initialSeats);
+    const [seatColors, setSeatColors] = useState(initialSeatColors);
+    const [selectedColor, setSelectedColor] = useState<string>('');
+    const [selectedIndex, setSelectedIndex] = useState<number>(0);
+
+    const handleColorSelect = (color: string, index: number) => {
+        setSelectedColor(color);
+        setSelectedIndex(index + 1);
+    };
 
     const handleSeatClick = (rowIndex: number, seatIndex: number) => {
         const updatedSeats = seats.map((row, rIndex) =>
-            row.map((seat, sIndex) => (rIndex === rowIndex && sIndex === seatIndex ? !seat : seat))
+            row.map((seat, sIndex) => {
+                if (rIndex === rowIndex && sIndex === seatIndex) {
+                    return seat === selectedIndex ? 0 : selectedIndex;
+                }
+                return seat;
+            })
         );
+
+        const updatedSeatColors = seatColors.map((color, index) => {
+            const seatIndexFlat = rowIndex * seatsPerRow + seatIndex;
+            if (index === seatIndexFlat) {
+                return updatedSeats[rowIndex][seatIndex] === 0 ? 'lightgray' : selectedColor;
+            }
+            return color;
+        });
+
         setSeats(updatedSeats);
+        setSeatColors(updatedSeatColors);
     };
 
     const handleSubmit = () => {
@@ -30,14 +55,15 @@ export default function BookingPage() {
                             <button
                                 key={seatIndex}
                                 className={`seat ${seat ? 'selected' : ''}`}
+                                style={{ backgroundColor: seatColors[rowIndex * seatsPerRow + seatIndex] }}
                                 onClick={() => handleSeatClick(rowIndex, seatIndex)}
                             >
-                                {rowIndex + 1}{String.fromCharCode(65 + seatIndex)}
                             </button>
                         ))}
                     </div>
                 ))}
             </div>
+            <Palette onColorSelect={handleColorSelect} />
             <button className="bg-green-500 text-white cursor-pointer rounded-md p-4" onClick={handleSubmit}>Submit</button>
             <style jsx>{`
                 .container {
