@@ -58,8 +58,8 @@ export default function BookingPage() {
         console.log("Seats submitted:", seatsJson);
 
         // TODO: fix api endpoint
-        const response = await fetch('https://better-boarding-workers-611279150412.us-central1.run.app/process', {
-        // const response = await fetch('http://localhost:5000/api', {
+        // const response = await fetch('https://better-boarding-workers-611279150412.us-central1.run.app/process', {
+        const response = await fetch('http://localhost:5000/api', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -78,6 +78,13 @@ export default function BookingPage() {
             const result = await getJobResult(jobId);
             console.log("Polling job result:", result);
             if (result) {
+                // 0-index to 1-index result, then convert all non-selected seats to 0
+                result.result = result.result.map((row, rowIndex) =>
+                    row.map((group, seatIndex) =>
+                        group + 1
+                    )
+                );
+
                 setJobResult(result);
                 clearInterval(interval);
                 setLoading(false);
@@ -143,7 +150,7 @@ export default function BookingPage() {
                     ))}
                 </div>
                 <div className="time-taken">
-                    <h2>Time Taken</h2>
+                    <h2>Estimated Boarding Time</h2>
                     <p>{jobResult.timeTaken} seconds</p>
                 </div>
                 </>

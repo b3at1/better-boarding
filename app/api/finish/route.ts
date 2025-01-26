@@ -30,9 +30,12 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   const jobId = req.nextUrl.searchParams.get("jobId") as string;
+  if (!(jobId in jobResults)) {
+      return NextResponse.json({ success: false, error: "Job not found" });
+  }
   console.log("Getting job result:", jobId);
   console.log("Job results:", jobResults[jobId]);
-  return NextResponse.json(jobResults[jobId]);
+  return NextResponse.json({ success: true, result: jobResults[jobId] });
 }
 
 export function getJobResult(jobId: string) {
@@ -41,5 +44,11 @@ export function getJobResult(jobId: string) {
     headers: {
       "Content-Type": "application/json",
     },
-  }).then((response) => response.json());
+  }).then((response) => response.json())
+  .then((data) => {
+    if (!data.success) {
+      return null;
+    }
+    return data.result as JobResult;
+  });
 }
