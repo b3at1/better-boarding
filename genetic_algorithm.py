@@ -1,21 +1,40 @@
 import numpy as np
 import json
 
+class Person:
+    def __init__(self, person_id: int, family_id: int, boarding_number: int, seat: tuple[int, int]) -> None:
+        self.person_id = person_id
+        self.family_id = family_id
+        self.boarding_number = boarding_number
+        self.seat = seat
+    def __repr__(self):
+        return f"{self.seat}"
+
+class Family:
+    def __init__(self, family_id: int, boarding_number: int, people: list[Person]) -> None:
+        self.family_id = family_id
+        self.boarding_number = boarding_number
+        self.people = people
+    def __repr__(self):
+        return f"Family {self.family_id} boarding # {self.boarding_number} people {self.people.__str__()}"
+        
+
+POPULATION_SIZE = 2
 
 NUM_ROWS = 18
 NUM_COLS = 6
+TOTAL_PEOPLE = NUM_ROWS * NUM_COLS
 
 
 SITTING_DELAYS = [1, 7, 11]
 LUGGAGE_DELAY = 10
-WALKING_DELAY = 1
 
+def main():
+    orig_families = get_families(magic_get_seating_grid())
+    print(np.array(orig_families))
+    population = []
 
-seats = np.zeros((NUM_ROWS, NUM_COLS), dtype=int)
-num_families = 10
-
-
-def generate_families() -> np.ndarray:
+def magic_get_seating_grid() -> np.ndarray:
     return [
         [12, 45, 3, 27, 8, 60],
         [34, 18, 22, 50, 9, 41],
@@ -37,44 +56,60 @@ def generate_families() -> np.ndarray:
         [11, 40, 48, 15, 32, 56]
     ]
 
-
-def randomize_elements_in_list(lst: list[int]) -> list[int]:
-    return np.random.permutation(lst).tolist()
-
-
-# def create_individual(num_families: int, num_boarding_groups: int) -> list[int]:
-#     boarding_groups = []
-#     for family in range(num_families):
-#         boarding_groups.append(np.random.randint(0, num_boarding_groups))
-#     return boarding_groups
-
-
-# def create_population(num_families: int, num_boarding_groups: int, population_size: int) -> list[list[int]]:
-#     individuals = []
-#     for _ in range(population_size):
-#         individuals.append(create_individual(num_families, num_boarding_groups))
-#     return individuals
+# boarding numbers are NOT initialized in this function
+def get_families(input_grid: list[list[int]]) -> list[Family]:
+    family_ids = set()
+    for row in input_grid:
+        for f in row:
+            family_ids.add(f)
+    family_ids = {poopy : i for i, poopy in enumerate(list(family_ids))}
+    families = [Family(i, -1, []) for poopy, i in family_ids.items()]
+    for i in range(len(input_grid)):
+        for j in range(len(input_grid[i])):
+            person = Person(i * NUM_COLS + j, family_ids[input_grid[i][j]], -1, (i, j))
+            families[family_ids[input_grid[i][j]]].people.append(person)
+    return families
 
 
-def create_individual(num_families: int, num_boarding_groups: int) -> np.ndarray[int]:
-    return np.random.randint(0, num_boarding_groups, size=num_families)
+def get_individual() -> list[Family]:
+    seating = magic_get_seating_grid()
+    families = []
+    for i in range(len(seating)):
+        boarding_number = i % 3
+        family = Family(i, boarding_number, [])
+        for j in range(len(seating[i])):
+            person = Person(i * NUM_COLS + j, i, boarding_number, (i, j))
+            family.people.append(person)
+        families.append(family)
+    return families
+
+# POPULATION
+# INDIVIDUAL: 
+    # Each individual is a list of families
+    # sort each individual by boarding number
+        # Each family is a list of people
+        # Sort the people of each family by seat
 
 
-def create_population(num_families: int, num_boarding_groups: int, population_size: int) -> np.ndarray[int]:
-    return np.random.randint(0, num_boarding_groups, size=(population_size, num_families))
 
+# FITNESS FUNCTION
+# Given the queue of people in the order they board the plane, calculate total time taken to board the plane
+# Calculate the time taken to board the plane
+    # Simulate the boarding process with positions of people at each point in time
+    # Create a list of time penalties, each person has a time penalty
+    # If person has a time penalty > 0, they are not allowed to move, decrement time penalty by 1 each turn
+    # If person has a time penalty = 0, they are allowed to move unless if they are blocked by another person
 
+# Time penalties
+penalties = np.zeros((TOTAL_PEOPLE))
 
+# check if person has seat in current row
+def has_seat_in_row(person: Person, row: int) -> bool:
+    return person.seat[0] == row
 
-
-
-def simulate(randomized_family_ordering: list[list[int]]) -> float:
+def fitness_function(individual: list[Family], queue: list[Person]) -> int:
     pass
 
-
-def main():
-    print("test")
-    print(create_population(10, 4, 3))
 
 
 if __name__ == "__main__":
