@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import Palette from "@/components/palette";
-import { getJobResult, Result } from "../api/finish";
+import { getJobResult, JobResult } from "../api/finish/route";
 
 export default function BookingPage() {
     const rows = 18;
@@ -18,6 +18,7 @@ export default function BookingPage() {
     const [seatColors, setSeatColors] = useState(initialSeatColors);
     const [selectedColor, setSelectedColor] = useState<string>("");
     const [selectedIndex, setSelectedIndex] = useState<number>(0);
+    const [loading, setLoading] = useState<boolean>(false);
 
     const handleColorSelect = (color: string, index: number) => {
         setSelectedColor(color);
@@ -52,35 +53,40 @@ export default function BookingPage() {
     };
 
     const handleSubmit = async () => {
+        setLoading(true);
         const seatsJson = JSON.stringify(seats);
         console.log("Seats submitted:", seatsJson);
 
         // TODO: fix api endpoint
-        // const response = await fetch('https://remote-api.com/submit', {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        //     body: seatsJson,
-        // });
+        const response = await fetch('https://better-boarding-workers-611279150412.us-central1.run.app/process', {
+        // const response = await fetch('http://localhost:5000/api', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-API-Key': '9JSwAoO8l33t0mr3mQ'
+            },
+            body: seatsJson,
+        });
 
-        // const { jobId } = await response.json();
-        // setJobId(jobId);
-        // pollJobResult(jobId);
+        const { jobId } = await response.json();
+        setJobId(jobId);
+        pollJobResult(jobId);
     };
 
     const pollJobResult = (jobId: string) => {
         const interval = setInterval(async () => {
             const result = await getJobResult(jobId);
+            console.log("Polling job result:", result);
             if (result) {
                 setJobResult(result);
                 clearInterval(interval);
+                setLoading(false);
             }
-        }, 5000); // Poll every 5 seconds
+        }, 3000); // Poll every 3 seconds
     };
 
     const [jobId, setJobId] = useState<string | null>(null);
-    const [jobResult, setJobResult] = useState<Result | null>(null);
+    const [jobResult, setJobResult] = useState<JobResult | null>(null);
 
     return (
         <div className="container font-[family-name:var(--font-geist-sans)]">
@@ -113,8 +119,9 @@ export default function BookingPage() {
                 ))}
             </div>
             {jobResult ? (
+                <>
                 <div className="airplane">
-                    {jobResult.map((row, rowIndex) => (
+                    {jobResult.result.map((row, rowIndex) => (
                         <div
                             key={rowIndex}
                             className={`row ${rowIndex < 8 ? "front" : "back"}`}
@@ -135,6 +142,11 @@ export default function BookingPage() {
                         </div>
                     ))}
                 </div>
+                <div className="time-taken">
+                    <h2>Time Taken</h2>
+                    <p>{jobResult.timeTaken} seconds</p>
+                </div>
+                </>
             ) : (
                 <>
                     <Palette onColorSelect={handleColorSelect} />
@@ -145,6 +157,7 @@ export default function BookingPage() {
                     >
                         Submit
                     </button>
+                    {loading && <p>Loading...</p>}
                 </>
             )}
             <style jsx>{`
