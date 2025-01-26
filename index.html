@@ -8,12 +8,12 @@
     body {
       margin: 0;
       padding: 0;
-      background: #dedede;
+      background: #7bc787;
     }
     ul {
       position: absolute;
       top: 50%;
-      left: 50%;
+      left: 50%; 
       transform: translate(-50%, -50%);
       margin: 0;
       padding: 0;
@@ -23,31 +23,27 @@
       list-style: none;
     }
     ul li a {
-      position: relative;
-      width: 60px;
-      height: 60px;
-      display: block;
-      text-align: center;
+      display: flex;
+      padding: 2px;
       margin: 0 10px;
       border-radius: 50%;
-      padding: 6px;
       box-sizing: border-box;
       text-decoration: none;
-      background: linear-gradient(0deg, #ddd, #fff);
+      background: linear-gradient(0deg, #ccc, #eee);
       transition: all 0.2s ease-in-out;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.35);
     }
-    ul li a:hover {
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-    }
-    ul li a:active {
-      transform: translateY(2px);
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    ul li a:hover:active {
+      transform: translateY(3px);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     }
     ul li a .fa {
+      padding: 2px;
       width: 100%;
       height: 100%;
-      display: block;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       border-radius: 50%;
       line-height: calc(60px - 12px);
       font-size: 24px;
@@ -66,14 +62,23 @@
       <a href="#" id="circularButton">
         <div class="fa">
           <!-- SVG Circle Button -->
-          <svg width="60" height="60" xmlns="http://www.w3.org/2000/svg">
+          <svg width="60" height="60" xmlns="http://www.w3.org/2000/svg" style="transform: scale(0.98);">
             <defs>
               <clipPath id="clipCircle">
                 <circle cx="30" cy="30" r="25" />
               </clipPath>
+              <linearGradient id="outgrad" x1="100%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#f0f0f0;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#b8b8b8;stop-opacity:1" />
+                </linearGradient>
+              <linearGradient id="ingrad" x1="100%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#e0e0e0;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#f0f0f0;stop-opacity:1" />
+                </linearGradient>
             </defs>
-            <circle cx="24" cy="24" r="23" fill="#ffffff" stroke="#ddd" stroke-width="2"/>
-            <image x="5" y="5" width="40" height="40" href="perfectCow.svg" clip-path="url(#clipCircle)"/>
+            <circle cx="30" cy="30" r="26.5" fill="url(#outgrad)"/>
+            <circle cx="30" cy="30" r="25" fill="url(#ingrad)"/>
+            <image x="10" y="10" width="40" height="40" href="perfectCow.svg" clip-path="url(#clipCircle)"/>
           </svg>
         </div>
       </a>
