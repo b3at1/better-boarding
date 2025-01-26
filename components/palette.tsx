@@ -52,6 +52,7 @@ const Palette: React.FC<PaletteProps> = ({ onColorSelect }) => {
                     }
                     setColors((prevColors) => [...prevColors, newColor]);
                     setSelectedIndex((prevIndex) => prevIndex + 1);
+                    break
                 }
             }
         };
