@@ -37,18 +37,3 @@ export async function GET(req: NextRequest) {
   console.log("Job results:", jobResults[jobId]);
   return NextResponse.json({ success: true, result: jobResults[jobId] });
 }
-
-export function getJobResult(jobId: string) {
-  return fetch("/api/finish?jobId=" + jobId, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  }).then((response) => response.json())
-  .then((data) => {
-    if (!data.success) {
-      return null;
-    }
-    return data.result as JobResult;
-  });
-}

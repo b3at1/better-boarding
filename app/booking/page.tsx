@@ -1,7 +1,22 @@
 "use client";
 import React, { useState } from "react";
 import Palette from "@/components/palette";
-import { getJobResult, JobResult } from "../api/finish/route";
+import { JobResult } from "../api/finish/route";
+
+function getJobResult(jobId: string): Promise<JobResult | null> {
+    return fetch("/api/finish?jobId=" + jobId, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((response) => response.json())
+    .then((data) => {
+      if (!data.success) {
+        return null;
+      }
+      return data.result as JobResult;
+    });
+  }
 
 export default function BookingPage() {
     const rows = 18;
@@ -58,8 +73,8 @@ export default function BookingPage() {
         console.log("Seats submitted:", seatsJson);
 
         // TODO: fix api endpoint
-        // const response = await fetch('https://better-boarding-workers-611279150412.us-central1.run.app/process', {
-        const response = await fetch('http://localhost:5000/api', {
+        const response = await fetch('https://better-boarding-workers-611279150412.us-central1.run.app/process', {
+        // const response = await fetch('http://localhost:5000/api', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

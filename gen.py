@@ -29,6 +29,7 @@ async def process_data(data):
     global best_time
     # Example processing step (you would implement your logic here)
     family_grid = data
+    best_time = float("inf")
     population = generate_population()
     for i in range(NUM_GENERATIONS):
         population = evolve(population)
