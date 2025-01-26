@@ -26,7 +26,7 @@ const euclideanDist = (color1: string, color2: string) => {
 const invalidColor = (color: string, colors: string[]) => {
     return colors.some(
         (existingColor) =>
-            existingColor === color || euclideanDist(color, existingColor) < 100
+            existingColor === color || euclideanDist(color, existingColor) < 20
     );
 };
 
@@ -45,11 +45,14 @@ const Palette: React.FC<PaletteProps> = ({ onColorSelect }) => {
                 setSelectedIndex((prevIndex) => prevIndex + 1);
             } else {
                 let newColor = getRandomColor();
-                while (colors.includes(newColor) || invalidColor(newColor, colors)) {
-                    newColor = getRandomColor();
+                for (let i = 0; i < 100; i++) {
+                    if (colors.includes(newColor) || invalidColor(newColor, colors)) {
+                        newColor = getRandomColor();
+                        continue;
+                    }
+                    setColors((prevColors) => [...prevColors, newColor]);
+                    setSelectedIndex((prevIndex) => prevIndex + 1);
                 }
-                setColors((prevColors) => [...prevColors, newColor]);
-                setSelectedIndex((prevIndex) => prevIndex + 1);
             }
         };
 
