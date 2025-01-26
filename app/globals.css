@@ -3,19 +3,27 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #202938;
+  --foreground: #d1d5e7;
+  --background-start: #414e5e;
+  --background-end: #232c3d;
 }
 
 body {
   color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  background: linear-gradient(165deg, var(--background-start), var(--background-end));
+  font-family: 'Inter', sans-serif;
+  animation: rotateGradient 1m linear infinite;
+}
+
+@keyframes rotateGradient {
+  0% {
+  background: linear-gradient(150deg, var(--background-start), var(--background-end));
+  }
+  50% {
+  background: linear-gradient(180deg, var(--background-start), var(--background-end));
+  }
+  100% {
+  background: linear-gradient(150deg, var(--background-start), var(--background-end));
+  }
 }
