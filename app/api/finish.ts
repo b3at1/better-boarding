@@ -6,7 +6,14 @@ interface JobResults {
     [jobId: string]: Result;
 }
 
-let jobResults: JobResults = {};
+const jobResults: JobResults = {};
+
+// clear job results every 10 minutes
+setInterval(() => {
+    for (const jobId in jobResults) {
+        delete jobResults[jobId];
+    }
+}, 60 * 1000);
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {

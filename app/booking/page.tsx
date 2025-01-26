@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import Palette, { PaletteProps } from "@/components/palette";
+import Palette from "@/components/palette";
 import { getJobResult, Result } from "../api/finish";
 
 export default function BookingPage() {
@@ -53,7 +53,7 @@ export default function BookingPage() {
 
     const handleSubmit = async () => {
         const seatsJson = JSON.stringify(seats);
-        console.log("Seats submitted:", seats);
+        console.log("Seats submitted:", seatsJson);
 
         // TODO: fix api endpoint
         // const response = await fetch('https://remote-api.com/submit', {
