@@ -13,12 +13,12 @@ interface JobResults {
 
 const jobResults: JobResults = {};
 
-// clear job results every 10 minutes
+// clear job results every hour
 setInterval(() => {
   for (const jobId in jobResults) {
     delete jobResults[jobId];
   }
-}, 60 * 1000);
+}, 1000 * 60 * 60);
 
 export async function POST(req: NextRequest) {
   const { jobId, result, timeTaken } = await req.json();
