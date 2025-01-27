@@ -1,26 +1,19 @@
 from flask import Flask, request, jsonify
-from dotenv import load_dotenv
 import gen  # Assuming gen.py is in the same directory
 import requests  # Import requests to send data to another server
-import os # For dotenv
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app, methods=["POST, OPTIONS"], origins=["https://betterboarding.tech", "http://localhost:3000"])
-load_dotenv()
+# Configure CORS
+CORS(
+    app,
+    resources={r"/*": {"origins": ["https://betterboarding.tech"]}},
+    allow_headers=["Content-Type", "Authorization"]
+)
 
-# Define the allowed URL that can send requests
-ALLOWED_API_KEY = os.getenv('ALLOWED_API_KEY')
 
 @app.route('/process', methods=['POST'])
 def process_request():
-    # Check if the 'X-API-Key' header exists
-    api_key = request.headers.get('X-API-Key')
-    
-    # If the API key is not provided or does not match the allowed key, return an error
-    if not api_key or api_key != ALLOWED_API_KEY:
-        return jsonify({"error": "Unauthorized: Invalid or missing API Key"}), 403
-    
 
 
     data = request.json  # Assuming the data is sent as JSON

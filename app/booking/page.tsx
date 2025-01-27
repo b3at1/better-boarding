@@ -77,8 +77,7 @@ export default function BookingPage() {
         // const response = await fetch('http://localhost:5000/api', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'X-API-Key': '9JSwAoO8l33t0mr3mQ'
+                'Content-Type': 'application/json'
             },
             body: seatsJson,
         });
