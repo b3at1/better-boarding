@@ -103,7 +103,7 @@ export default function BookingPage() {
                 clearInterval(interval);
                 setLoading(false);
             }
-        }, 3000); // Poll every 3 seconds
+        }, 15000); // Poll every 15 seconds
     };
 
     const [jobId, setJobId] = useState<string | null>(null);
