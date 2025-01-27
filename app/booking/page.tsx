@@ -73,8 +73,8 @@ export default function BookingPage() {
         console.log("Seats submitted:", seatsJson);
 
         // TODO: fix api endpoint
-        const response = await fetch('https://better-boarding-workers-611279150412.us-central1.run.app/process', {
-        // const response = await fetch('http://localhost:5000/api', {
+        // const response = await fetch('https://better-boarding-workers-611279150412.us-central1.run.app/process', {
+        const response = await fetch('http://localhost:8080/process', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -155,6 +155,9 @@ export default function BookingPage() {
                                         backgroundColor: group
                                             ? "green"
                                             : "lightgray",
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
                                     }}
                                 >
                                     {group}

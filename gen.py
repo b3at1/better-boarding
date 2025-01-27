@@ -1,10 +1,7 @@
 import numpy as np
 import json
 import copy as COPY
-
-from flask import Flask, request, jsonify
-
-app = Flask(__name__)
+import logging
 
 
 NUM_GENERATIONS = 3
@@ -24,7 +21,7 @@ best_time = float("inf")
 family_grid = []
 
 
-async def process_data(data):
+def process_data(data):
     global family_grid
     global best_time
     # Example processing step (you would implement your logic here)
@@ -35,8 +32,8 @@ async def process_data(data):
         population = evolve(population)
         simulate_population(population)
         
-    print(get_boarding_number_grid(population[0]))
-    
+    logging.info(f"Best time: {best_time}")
+
     processed_data = [
         get_boarding_number_grid(population[0]),
         best_time
@@ -305,7 +302,7 @@ def mutate(individual: list[Family]) -> list[Family]:
     return copy
 
 def evolve(population: list[list[Family]]) -> list[list[Family]]:
-    print("evolve")
+    logging.info("EVOLVING")
     # evolve the population by killing the bottom half and repopulating the top half
     population_fitnesses = simulate_population(population)
     population_fitnesses = kill_half(population_fitnesses)

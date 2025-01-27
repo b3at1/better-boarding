@@ -1,44 +1,55 @@
 from flask import Flask, request, jsonify
-import gen  # Assuming gen.py is in the same directory
-import requests  # Import requests to send data to another server
 from flask_cors import CORS
+import logging
+import uuid
+import threading
+import requests 
+from gen import process_data
 
 app = Flask(__name__)
-# Configure CORS
 CORS(
     app,
     resources={r"/*": {"origins": ["https://betterboarding.tech"]}},
     allow_headers=["Content-Type", "Authorization"]
 )
+app.logger.setLevel(logging.INFO)
 
-
+# Handle preflight (OPTIONS) requests explicitly, in case the browser triggers one.
+@app.route('/process', methods=['OPTIONS'])
+def options():
+    response = app.make_response('')
+    response.headers['Access-Control-Allow-Origin'] = 'https://betterboarding.tech'
+    response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+    return response
+    
 @app.route('/process', methods=['POST'])
-def process_request():
+def api():
+    data = request.json
+    generated_uuid = str(uuid.uuid4())
+    app.logger.info(f"Received data: {data} with jobId: {generated_uuid}")
 
+    def process():
+        try:
+            result = process_data(data)
+            time_taken = result[-1]
+            result = result[:-1][0]
+            app.logger.info(f"Processed data: {result} with jobId: {generated_uuid}")
 
-    data = request.json  # Assuming the data is sent as JSON
-    if not data:
-        return jsonify({"error": "No data provided"}), 400
-    
-    # Pass the data to gen.py for processing
-    result = gen.process_data(data)
-    
-    # Define the URL of the server to send the processed data to
-    target_url = 'https://webhook.site/6f69b66c-3db1-4def-863a-a4a9a2c27a2e'  # Replace with the actual URL of the server
+            body = {
+                'jobId': generated_uuid,
+                'result': result,
+                'timeTaken': time_taken
+            }
 
-    # Send the result via POST to the target server
-    try:
-        # Send the result dictionary directly to the target URL
-        response = requests.post(target_url, json=result)
-        
-        # Check if the request was successful
-        if response.status_code == 200:
-            return jsonify({"message": "Data successfully sent to the server"}), 200
-        else:
-            return jsonify({"error": f"Failed to send data to the server: {response.text}"}), 500
-    except requests.exceptions.RequestException as e:
-        # Handle any errors during the POST request
-        return jsonify({"error": f"Error sending data: {str(e)}"}), 500
+            requests.post('https://betterboarding.tech/api/finish', json=body)
+            # requests.post('http://host.docker.internal:3000/api/finish', json=body)
 
-if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=8080)  # Binding to 0.0.0.0 to allow external requests
+        except Exception as e:
+            print(f"Error during processing: {e}")
+
+    threading.Thread(target=process).start()
+    return jsonify(jobId=generated_uuid)
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8080)

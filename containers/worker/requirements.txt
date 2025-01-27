@@ -1,4 +1,4 @@
-Flask==2.0.3
-Werkzeug==2.0.3
+Flask
+numpy
 requests==2.28.2
 flask-cors==5.0.0
