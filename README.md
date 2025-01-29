@@ -6,3 +6,5 @@ Please visit the [Devpost](https://devpost.com/software/better-boarding?ref_cont
 
 This project was an entry in TAMUHack 2025
 
+<br><br>
+oh yeah we also made this [cow button](https://betterboarding.tech/cow) 🐄
